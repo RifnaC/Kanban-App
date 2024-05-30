@@ -1,10 +1,21 @@
 /* eslint-disable react/prop-types */
 
-const Task = ({ text }) => {
+import { Draggable } from 'react-beautiful-dnd';
+
+const Task = ({ task, index }) => {
   return (
-    <div className="bg-white p-2 rounded shadow mb-2">
-      {text}
-    </div>
+    <Draggable draggableId={task.id} index={index}>
+      {(provided) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          className="bg-white p-2 rounded shadow mb-2"
+        >
+          {task.content}
+        </div>
+      )}
+    </Draggable>
   );
 };
 
