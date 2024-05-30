@@ -1,7 +1,11 @@
-const Task = () => {
-  return (
-    <div>Task</div>
-  )
-}
+/* eslint-disable react/prop-types */
 
-export default Task
+const Task = ({ text }) => {
+  return (
+    <div className="bg-white p-2 rounded shadow mb-2">
+      {text}
+    </div>
+  );
+};
+
+export default Task;
