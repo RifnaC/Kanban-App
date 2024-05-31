@@ -15,7 +15,7 @@ const AddTask = ({ columnId, addTask }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2">
+    <form onSubmit={handleSubmit} className="space-y-2 mt-2">
       <input
         type="text"
         value={title}
@@ -38,8 +38,8 @@ const AddTask = ({ columnId, addTask }) => {
         className="p-2 border rounded w-full"
         required
       />
-      <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
-        Add Task
+      <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
+        Save Task
       </button>
     </form>
   );

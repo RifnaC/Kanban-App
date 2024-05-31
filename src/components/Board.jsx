@@ -1,12 +1,15 @@
+// src/components/Board.js
 import  { useState, useEffect } from 'react';
 import Column from './Column';
 import { initialData } from '../data/initialData';
 import { DragDropContext } from 'react-beautiful-dnd';
+import { v4 as uuidv4 } from 'uuid';
 
 const Board = () => {
   const [data, setData] = useState(initialData);
 
   useEffect(() => {
+    // Simulate data fetching
     setData(initialData);
   }, []);
 
@@ -49,6 +52,7 @@ const Board = () => {
       return;
     }
 
+    // Moving from one column to another
     const startTaskIds = Array.from(start.taskIds);
     startTaskIds.splice(source.index, 1);
     const newStart = {
@@ -75,19 +79,48 @@ const Board = () => {
     setData(newState);
   };
 
+  const addTask = (columnId, task) => {
+    const newTaskId = `task-${uuidv4()}`;
+    const newTask = { id: newTaskId, ...task };
 
-  
+    const newTasks = {
+      ...data.tasks,
+      [newTaskId]: newTask,
+    };
+
+    const column = data.columns[columnId];
+    const newTaskIds = [...column.taskIds, newTaskId];
+    const newColumn = {
+      ...column,
+      taskIds: newTaskIds,
+    };
+
+    const newState = {
+      ...data,
+      tasks: newTasks,
+      columns: {
+        ...data.columns,
+        [newColumn.id]: newColumn,
+      },
+    };
+
+    setData(newState);
+  };
+
   return (
+    <>
+    <h1 className='text-3xl my-3 font-bold text-center'>Kanban Board</h1>
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex space-x-4 p-4">
         {data.columnOrder.map((columnId) => {
           const column = data.columns[columnId];
           const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
 
-          return <Column key={column.id} column={column} tasks={tasks} />;
+          return <Column key={column.id} column={column} tasks={tasks} addTask={addTask} />;
         })}
       </div>
     </DragDropContext>
+    </>
   );
 };
 
