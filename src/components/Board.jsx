@@ -1,4 +1,3 @@
-// src/components/Board.jsx
 import  { useState, useEffect } from 'react';
 import Column from './Column';
 import { initialData } from '../data/initialData';
@@ -76,6 +75,8 @@ const Board = () => {
     setData(newState);
   };
 
+
+  
   return (
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex space-x-4 p-4">
