@@ -1,5 +1,5 @@
 
-const Login = () => {
+export const Login = () => {
   return (
     <div className="flex items-center justify-center h-screen">
       <form className="bg-white p-6 rounded shadow-md w-80">
