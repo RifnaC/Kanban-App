@@ -1,8 +1,8 @@
-
+// import bgImg from "
 export const SignUp = () => {
   return (
-    <div className="flex items-center justify-center h-screen">
-      <form className="bg-white p-6 rounded shadow-md w-80">
+    <div className="flex items-center justify-center bg-hero bg-cover h-screen">
+      <form className="bg-transparent p-6 rounded shadow-md w-80">
         <h2 className="text-2xl mb-4">Sign Up</h2>
         <div className="mb-4">
           <label className="block text-sm font-bold mb-2" htmlFor="email">Email</label>
