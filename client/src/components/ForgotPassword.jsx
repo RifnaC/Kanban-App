@@ -8,12 +8,13 @@ export const ForgotPassword = () => {
   
     const handleSubmit = (e) => {
       e.preventDefault();
-      Axios.post('http://localhost:3000/auth/forgot-password', {
-        email,
-      }).then(response => {
+      Axios.post('http://localhost:3000/auth/forgot-password'
+      , {email})
+      .then(response => {
         if (response.status === 200) {
             alert("reset link is send to your email check the mail");
-          navigate("/")
+            console.log(response.data)
+            navigate('/login')
         }
       }).catch(err => console.log(err))
     }
