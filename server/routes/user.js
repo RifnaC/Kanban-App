@@ -1,7 +1,7 @@
 import  express from "express";
 import bcrypt from 'bcrypt';
 import { User } from "../models/user.js";
-
+import jwt from 'jsonwebtoken'
 const router = express.Router();
 
 router.post("/signup", async(req, res) => {
@@ -32,6 +32,9 @@ router.post("/signin", async(req, res) => {
     if(!isMatch) {
         return res.status(400).json({message: "Wrong Password"});
     }
+    const token = jwt.sign({id:user._id}. process.env.JWT_SECRET, {expiresIn: '1h'});
+    res.cookie("token", token, {httpOnly: true, maxAge: 36000});
+    res.status(200).json({message: "Logged in successfully"});
 })
 
 export { router as userRouter }

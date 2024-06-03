@@ -6,6 +6,8 @@ export const Login = () => {
   const [email, setEmail] =useState("");
   const [password, setPassword] =useState("");
   const navigate = useNavigate();
+
+  Axios.defaults.withCredentials = true;
   const handleSubmit = (e) =>{
     e.preventDefault();
     Axios.post('http://localhost:3000/auth/signin',{
