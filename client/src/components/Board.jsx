@@ -4,12 +4,12 @@ import Column from './Column';
 import { initialData } from '../data/initialData';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
 
 const Board = () => {
+  const navigate = useState()
   const [data, setData] = useState(initialData);
-
   useEffect(() => {
-    // Simulate data fetching
     setData(initialData);
   }, []);
 
@@ -107,8 +107,21 @@ const Board = () => {
     setData(newState);
   };
 
+  const handleLogout = () =>{
+    axios.get('http://localhost:3000/auth/logout')
+    .then(response =>{
+      if(response.status === 200){
+        navigate('/login')
+      }
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
   return (
     <>
+    <div className='text-right m-2'><button onClick={handleLogout}> Logout</button></div>
     <h1 className='text-3xl my-3 font-bold text-center'>Kanban Board</h1>
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex space-x-4 p-4">

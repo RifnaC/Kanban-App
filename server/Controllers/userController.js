@@ -40,6 +40,22 @@ export const login = async (req, res) => {
     res.status(200).json({ message: "Logged in successfully" });
 }
 
+// verify token
+export const verifyToken = async (req, res, next) => {
+    try {
+        console.log(req.cookies)
+        const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id);
+    next();
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
 // forgot password
 export const forgotPassword = async (req, res) => {
     try {
@@ -48,7 +64,7 @@ export const forgotPassword = async (req, res) => {
         if (!user) {
             return res.status(400).json({ message: "User does not exist" });
         }
-        const token = jwt.sign({ id: user._id }, process.env.JWT_RESET_PASSWORD, { expiresIn: '1d' });
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1d' });
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
@@ -61,7 +77,7 @@ export const forgotPassword = async (req, res) => {
             from: process.env.MAIL_USER,
             to: email,
             subject: "Reset Password",
-            text: `Please click on the link below to reset your password \n http://localhost:5143/reset-password/${token}`,
+            text: `Please click on the link below to reset your password.\n http://localhost:5173/reset-password/${token}`,
         };
         transporter.sendMail(mailOptions, (error, info) => {
             if(error) {
@@ -73,4 +89,38 @@ export const forgotPassword = async (req, res) => {
     } catch (error) {
         return res.status(500).json({ message: "Something went wrong"});
     }
+}
+
+// reset password
+export const resetPassword = async(req, res) => {
+    const token = req.params.token;
+    const password = req.body.password;
+    const confirmPassword = req.body.confirmPassword;
+        try {
+            if (password !== confirmPassword) {
+                return res.status(400).json({ message: "Passwords do not match" });
+            }
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const id = decoded.id;
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const user = await User.findByIdAndUpdate({ _id: id }, { password: hashedPassword });
+            return res.status(200).json({ message: "Password reset successfully" });
+        } catch (error) {
+            res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+}
+
+export const authorized = async(req, res) => {
+    if(req.user){
+        res.status(200).json({ message: "Authorized" });
+    } else {
+        res.status(401).json({ message: "Unauthorized" });
+    }
+    
+}
+
+export const logout = async(req, res) => {
+    res.clearCookie("token");
+    res.status(200).json({ message: "Logged out successfully" });
 }
