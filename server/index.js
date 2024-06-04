@@ -5,15 +5,16 @@ import mongoose from "mongoose";
 import { userRouter } from "./routes/user.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import socketIO from 'socket.io'
+// import http from "http";
+// import { Server } from 'socket.io'
+import { taskRouter } from "./routes/task.js";
+// const socketIO = new Server(http, {
+//     cors: {
+//         origin: "http://localhost:5173/",
+//     }
+// })
 
-socketIO(http, {
-    cors: {
-        origin: "http://localhost:5173/",
-    }
-})
 const app = express();
-
 
 app.use(cors(
     {
@@ -22,15 +23,16 @@ app.use(cors(
     }
 ))
 
-socketIO.on('connection', (socket) =>{
-    console.log(`User connected: ${socket.id}`)
-    socket.on('disconnect', () => {
-        socket.disconnect()
-        console.log(`User disconnected: ${socket.id}`)
-    })
-})
+// socketIO.on('connection', (socket) =>{
+//     console.log(`User connected: ${socket.id}`)
+//     socket.on('disconnect', () => {
+//         socket.disconnect()
+//         console.log(`User disconnected: ${socket.id}`)
+//     })
+// })
 app.use(express.json())
-app.use("/auth", userRouter)
+app.use("/auth", userRouter);
+app.use("/api", taskRouter);
 
 
 mongoose.connect(process.env.MONGO_URI)

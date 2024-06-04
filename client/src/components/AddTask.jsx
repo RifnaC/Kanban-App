@@ -1,48 +1,80 @@
 /* eslint-disable react/prop-types */
+import Axios from 'axios';
 import { useState } from 'react';
+const AddTask = ({ columnId, onTaskAdded }) => {
 
-const AddTask = ({ columnId, addTask }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const [isFormVisible, setIsFormVisible] = useState(true);
+  const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    addTask(columnId, { title, description, dueDate });
-    setTitle('');
-    setDescription('');
-    setDueDate('');
+  // const handleAddTaskClick = () => {
+  //   setIsFormVisible(true);
+  // }
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setNewTask(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
 
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const task = {
+      ...newTask,
+      columnId
+    };
+
+    try {
+      const response = await Axios.post("http://localhost:3000/api/task", task)
+      const newTaskId = response.data._id;
+      const newTaskWithId = { id: newTaskId, ...task };
+      onTaskAdded(newTaskWithId);
+      setIsFormVisible(false);
+      setNewTask({ title: '', description: '', dueDate: '' });
+    } catch (error) {
+      console.error('Error adding task', error)
+    }
+  };
   return (
-    <form onSubmit={handleSubmit} className="space-y-2 m-2">
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Title"
-        className="p-2 border rounded w-full"
-        required
-      />
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description"
-        className="p-2 border rounded w-full"
-        required
-      />
-      <input
-        type="date"
-        value={dueDate}
-        onChange={(e) => setDueDate(e.target.value)}
-        className="p-2 border rounded w-full"
-        required
-      />
-      <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
-        Save Task
-      </button>
-    </form>
-  );
+  <>
+    { isFormVisible && (
+      <div className='bg-transparent border-2 mx-auto w-1/2 border-blue-200 flex justify-center items-center'>
+        <form onSubmit={handleFormSubmit} className="space-y-2 m-5 px-5">
+          <input
+            name='title'
+            type="text"
+            value={newTask.title}
+            onChange={handleFormChange}
+            placeholder="Title"
+            className="p-2 border rounded w-full px-3"
+            required
+          />
+          <textarea
+            name='description'
+            value={newTask.description}
+            onChange={handleFormChange}
+            placeholder="Description"
+            className="p-2 border rounded w-full"
+            required
+          />
+          <input
+            name='dueDate'
+            type="date"
+            value={newTask.dueDate}
+            onChange={handleFormChange}
+            className="p-2 border rounded w-full "
+            required
+          />
+          <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
+            Save Task
+          </button>
+        </form>
+
+      </div>
+    ) }
+  </>
+  )
 };
 
 export default AddTask;

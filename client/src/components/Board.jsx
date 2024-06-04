@@ -1,20 +1,54 @@
 // src/components/Board.js
 import { useState, useEffect } from 'react';
 import Column from './Column';
-import { initialData } from '../data/initialData';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import socketIO  from "socket.io-client"
+import AddTask from './AddTask';
+// import socketIO  from "socket.io-client"
 
-const socket = socketIO.connect("http://localhost:3000")
+// const socket = socketIO.connect("http://localhost:3000")
 const Board = () => {
   const navigate = useNavigate()
-  const [data, setData] = useState(initialData);
+  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [data, setData] = useState({ tasks: {}, columns: {}, columnOrder: [] });
+
+  const handleAddTaskClick = () => {
+    if (isFormVisible === false) {
+      setIsFormVisible(true);
+    } else {
+      setIsFormVisible(false)
+    }
+
+  };
+
+  const handleFormSubmit = () => {
+    setIsFormVisible(false);
+  };
+
   useEffect(() => {
-    setData(initialData);
-  }, []);
+    axios.get('http://localhost:3000/api/tasks/')
+    .then(response => {
+      const tasks = {};
+      const columns = {
+        'column-1': { id: 'column-1', title: 'To Do', taskIds: [] },
+        'column-2': { id: 'column-2', title: 'In Progress', taskIds: [] },
+        'column-3': { id: 'column-3', title: 'Done', taskIds: [] },
+      };
+      const columnOrder = ['column-1', 'column-2', 'column-3'];
+      console.log(response.data.tasks)
+      response.data.tasks.map(task => {
+        tasks[task._id] = { id: task._id, title: task.title, description: task.description, dueDate: task.dueDate };
+        console.log(columns[task.columnId])
+        columns[task.columnId].taskIds.push(task._id);
+      });
+
+      setData({ tasks, columns, columnOrder });
+    })
+    .catch(error => {
+      console.error('Error fetching tasks:', error);
+    });
+}, []);
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -80,19 +114,20 @@ const Board = () => {
     };
 
     setData(newState);
+
+    // Update the task's columnId in the backend
+    const movedTask = data.tasks[draggableId];
+    movedTask.columnId = destination.droppableId;
+    axios.post(`http://localhost:5000/tasks/task/${draggableId}`, movedTask)
+      .catch(error => {
+        console.error('Error updating task:', error);
+      });
   };
 
-  const addTask = (columnId, task) => {
-    const newTaskId = `task-${uuidv4()}`;
-    const newTask = { id: newTaskId, ...task };
-
-    const newTasks = {
-      ...data.tasks,
-      [newTaskId]: newTask,
-    };
-
-    const column = data.columns[columnId];
-    const newTaskIds = [...column.taskIds, newTaskId];
+  const handleTaskAdded = (task) => {
+    const newTasks = { ...data.tasks, [task.id]: task };
+    const column = data.columns[task.columnId];
+    const newTaskIds = [...column.taskIds, task.id];
     const newColumn = {
       ...column,
       taskIds: newTaskIds,
@@ -109,7 +144,6 @@ const Board = () => {
 
     setData(newState);
   };
-
   const handleLogout = () => {
     axios.get('http://localhost:3000/auth/logout')
       .then(response => {
@@ -126,14 +160,28 @@ const Board = () => {
     <>
       <div className='flex justify-between'>
         <h1 className='text-3xl m-3 px-6 text-white  font-bold text-center'>Kanban Board</h1>
-        <div className='text-right  m-3 px-6 text-white font-semibold'><button onClick={handleLogout}>Logout</button></div>
+        <div className='text-right  m-3 px-6 text-white font-semibold '>
+          <button
+            onClick={handleAddTaskClick}
+            className=" text-white font-bold mx-4"
+          >Add Task</button>
+          <button onClick={handleLogout}>Logout</button>
+        </div>
       </div>
+      {isFormVisible && (
+        <AddTask
+          columnId="column-1"
+          onTaskAdded={handleTaskAdded}
+          addTask={handleFormSubmit}
+          FormVisible={()=> setIsFormVisible(isFormVisible)}
+        />
+      )}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex space-x-4 p-4 mx-5">
           {data.columnOrder.map((columnId) => {
-            const column = data.columns[columnId];
+            const column = data.columns[columnId];            
             const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
-            return <Column key={column.id} column={column} tasks={tasks} addTask={addTask} socket ={socket}/>;
+            return <Column key={column.id} column={column} tasks={tasks} />;
           })}
         </div>
       </DragDropContext>
