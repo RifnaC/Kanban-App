@@ -1,13 +1,16 @@
 // src/components/Board.js
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Column from './Column';
 import { initialData } from '../data/initialData';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import socketIO  from "socket.io-client"
 
+const socket = socketIO.connect("http://localhost:3000")
 const Board = () => {
-  const navigate = useState()
+  const navigate = useNavigate()
   const [data, setData] = useState(initialData);
   useEffect(() => {
     setData(initialData);
@@ -107,32 +110,33 @@ const Board = () => {
     setData(newState);
   };
 
-  const handleLogout = () =>{
+  const handleLogout = () => {
     axios.get('http://localhost:3000/auth/logout')
-    .then(response =>{
-      if(response.status === 200){
-        navigate('/login')
-      }
-    })
-    .catch(err => {
-      console.log(err)
-    })
+      .then(response => {
+        if (response.status === 200) {
+          navigate('/login')
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
   }
 
   return (
     <>
-    <div className='text-right m-2'><button onClick={handleLogout}> Logout</button></div>
-    <h1 className='text-3xl my-3 font-bold text-center'>Kanban Board</h1>
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex space-x-4 p-4">
-        {data.columnOrder.map((columnId) => {
-          const column = data.columns[columnId];
-          const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
-
-          return <Column key={column.id} column={column} tasks={tasks} addTask={addTask} />;
-        })}
+      <div className='flex justify-between'>
+        <h1 className='text-3xl m-3 px-6 text-white  font-bold text-center'>Kanban Board</h1>
+        <div className='text-right  m-3 px-6 text-white font-semibold'><button onClick={handleLogout}>Logout</button></div>
       </div>
-    </DragDropContext>
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="flex space-x-4 p-4 mx-5">
+          {data.columnOrder.map((columnId) => {
+            const column = data.columns[columnId];
+            const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
+            return <Column key={column.id} column={column} tasks={tasks} addTask={addTask} socket ={socket}/>;
+          })}
+        </div>
+      </DragDropContext>
     </>
   );
 };

@@ -15,7 +15,7 @@ const AddTask = ({ columnId, addTask }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-2 mt-2">
+    <form onSubmit={handleSubmit} className="space-y-2 m-2">
       <input
         type="text"
         value={title}
