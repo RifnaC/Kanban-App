@@ -2,7 +2,7 @@
 import Task from './Task';
 import { Droppable } from 'react-beautiful-dnd';
 
-const Column = ({ column, tasks, }) => {
+const Column = ({ column, tasks, onTaskUpdated, onTaskDeleted }) => {
   return (
     <div className="bg-gray-200 rounded pb-3 w-1/3">
       <div className='flex justify-between bg-cyan-900 p-2'>
@@ -16,7 +16,13 @@ const Column = ({ column, tasks, }) => {
             className="flex flex-col space-y-2 p-2 pb-0"
           >
             {tasks.map((task, index) => (
-              <Task key={task.id} task={task} index={index} />
+              <Task 
+              key={task.id} 
+              task={task} 
+              index={index} 
+              onTaskUpdated={onTaskUpdated}
+              onTaskDeleted={onTaskDeleted}
+              />
             ))}
             {provided.placeholder}
           </div>

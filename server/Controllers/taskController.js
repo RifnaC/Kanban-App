@@ -28,24 +28,28 @@ export const getAllTasks = async (req, res) => {
 
 
 // UPDATE a task
-export const updateTask =(req, res) => {
-    Task.findById(req.params.id)
-      .then(task => {
-        task.title = req.body.title;
-        task.description = req.body.description;
-        task.dueDate = Date.parse(req.body.dueDate);
-        task.columnId = req.body.columnId;
+export const updateTask = async (req, res) => {
+    try {
+      const task = await Task.findById(req.params.id);
+      if (!task) {
+        return res.status(404).json({ error: 'Task not found' });
+      }
   
-        task.save()
-          .then(() => res.json('Task updated!'))
-          .catch(err => res.status(400).json('Error: ' + err));
-      })
-      .catch(err => res.status(400).json('Error: ' + err));
+      const { title, description, dueDate, columnId } = req.body;
+      task.title = title;
+      task.description = description;
+      task.dueDate = dueDate;
+      task.columnId = columnId;
+      const updatedTask = await task.save();
+      res.json(task);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
   };
   
   // DELETE a task
 export const deleteTask = (req, res) => {
     Task.findByIdAndDelete(req.params.id)
       .then(() => res.json('Task deleted.'))
-      .catch(err => res.status(400).json('Error: ' + err));
+      .catch(err => res.status(500).json('Error: ' + err));
   }

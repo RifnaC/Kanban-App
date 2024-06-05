@@ -36,11 +36,16 @@ const AddTask = ({ columnId, onTaskAdded }) => {
       console.error('Error adding task', error)
     }
   };
+
   return (
   <>
     { isFormVisible && (
       <div className='bg-transparent border-2 mx-auto w-1/2 border-blue-200 flex justify-center items-center'>
         <form onSubmit={handleFormSubmit} className="space-y-2 m-5 px-5">
+          <input 
+           name='columnId'
+           type="hidden"
+            value="column-1"/>
           <input
             name='title'
             type="text"

@@ -1,4 +1,4 @@
-// src/components/Board.js
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import Column from './Column';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -36,7 +36,6 @@ const Board = () => {
         'column-3': { id: 'column-3', title: 'Done', taskIds: [] },
       };
       const columnOrder = ['column-1', 'column-2', 'column-3'];
-      console.log(response.data.tasks)
       response.data.tasks.map(task => {
         tasks[task._id] = { id: task._id, title: task.title, description: task.description, dueDate: task.dueDate };
         console.log(columns[task.columnId])
@@ -118,7 +117,8 @@ const Board = () => {
     // Update the task's columnId in the backend
     const movedTask = data.tasks[draggableId];
     movedTask.columnId = destination.droppableId;
-    axios.post(`http://localhost:5000/tasks/task/${draggableId}`, movedTask)
+    console.log(movedTask)
+    axios.post(`http://localhost:3000/api/task/${draggableId}`, movedTask)
       .catch(error => {
         console.error('Error updating task:', error);
       });
@@ -155,7 +155,23 @@ const Board = () => {
         console.log(err)
       })
   }
+  const handleTaskUpdated = (updatedTask) => {
+    const newTasks = { ...data.tasks, [updatedTask.id]: updatedTask };
+    setData(prevState => ({ ...prevState, tasks: newTasks }));
+  };
+  const handleTaskDeleted = (taskId) => {
+    const { [taskId]: deletedTask,...newTasks } = data.tasks;
+    const newColumns = { ...data.columns };
+    Object.keys(newColumns).map(columnId => {
+      newColumns[columnId].taskIds = newColumns[columnId].taskIds.filter(id => id !== taskId);
+    });
 
+    setData(prevState => ({
+      ...prevState,
+      tasks: newTasks,
+      columns: newColumns,
+    }));
+  };
   return (
     <>
       <div className='flex justify-between'>
@@ -181,7 +197,13 @@ const Board = () => {
           {data.columnOrder.map((columnId) => {
             const column = data.columns[columnId];            
             const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
-            return <Column key={column.id} column={column} tasks={tasks} />;
+            
+            return <Column 
+            key={column.id} 
+            column={column} 
+            tasks={tasks} 
+            onTaskUpdated={handleTaskUpdated} 
+            onTaskDeleted={handleTaskDeleted}/>;
           })}
         </div>
       </DragDropContext>
