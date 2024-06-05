@@ -71,7 +71,7 @@ const AddTask = ({ columnId, onTaskAdded }) => {
             className="p-2 border rounded w-full "
             required
           />
-          <button type="submit" className="bg-green-500 text-white p-2 rounded w-full">
+          <button type="submit" className="bg-cyan-800 text-white p-2 rounded w-full">
             Save Task
           </button>
         </form>

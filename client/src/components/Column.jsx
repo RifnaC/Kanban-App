@@ -6,7 +6,7 @@ const Column = ({ column, tasks, onTaskUpdated, onTaskDeleted }) => {
   return (
     <div className="bg-gray-200 rounded pb-3 w-1/3">
       <div className='flex justify-between bg-cyan-900 p-2'>
-        <h2 className="text-lg text-center font-bold m-2">{column.title}</h2>
+        <h2 className="text-lg text-white text-center mx-auto font-bold m-2">{column.title}</h2>
       </div>
       <Droppable droppableId={column.id}>
         {(provided) => (
@@ -18,6 +18,7 @@ const Column = ({ column, tasks, onTaskUpdated, onTaskDeleted }) => {
             {tasks.map((task, index) => (
               <Task 
               key={task.id} 
+              columnId={column.id}
               task={task} 
               index={index} 
               onTaskUpdated={onTaskUpdated}
