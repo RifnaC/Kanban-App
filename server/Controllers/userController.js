@@ -111,6 +111,7 @@ export const resetPassword = async(req, res) => {
 
 }
 
+// Authorized
 export const authorized = async(req, res) => {
     if(req.user){
         res.status(200).json({ message: "Authorized" });
@@ -120,6 +121,7 @@ export const authorized = async(req, res) => {
     
 }
 
+// Logout
 export const logout = async(req, res) => {
     res.clearCookie("token");
     res.status(200).json({ message: "Logged out successfully" });

@@ -1,15 +1,15 @@
 import { Task } from "../models/Task.js";
 
-
+// add a task
 export const addTask = async (req, res) => {
-    const { columnId,title, description, dueDate } = req.body;
+    const { columnId, title, description, dueDate } = req.body;
     try {
         const newTask = await Task.create({
-            columnId: columnId, 
+            columnId: columnId,
             title: title,
-            description: description, 
+            description: description,
             dueDate: new Date(dueDate),
-            
+
         });
         return res.status(200).json({ message: "Task added successfully" });
     } catch (error) {
@@ -17,6 +17,7 @@ export const addTask = async (req, res) => {
     }
 }
 
+// get all tasks
 export const getAllTasks = async (req, res) => {
     try {
         const tasks = await Task.find({});
@@ -30,26 +31,26 @@ export const getAllTasks = async (req, res) => {
 // update a task
 export const updateTask = async (req, res) => {
     try {
-      const task = await Task.findById(req.params.id);
-      if (!task) {
-        return res.status(404).json({ error: 'Task not found' });
-      }
-  
-      const { title, description, dueDate, columnId } = req.body;
-      task.title = title;
-      task.description = description;
-      task.dueDate = dueDate;
-      task.columnId = columnId;
-      const updatedTask = await task.save();
-      res.json(task);
+        const task = await Task.findById(req.params.id);
+        if (!task) {
+            return res.status(404).json({ error: 'Task not found' });
+        }
+
+        const { title, description, dueDate, columnId } = req.body;
+        task.title = title;
+        task.description = description;
+        task.dueDate = dueDate;
+        task.columnId = columnId;
+        const updatedTask = await task.save();
+        res.json(task);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error.message });
     }
-  };
-  
-  // DELETE a task
+};
+
+// delete a task
 export const deleteTask = (req, res) => {
     Task.findByIdAndDelete(req.params.id)
-      .then(() => res.json('Task deleted.'))
-      .catch(err => res.status(500).json('Error: ' + err));
-  }
+        .then(() => res.json('Task deleted.'))
+        .catch(err => res.status(500).json('Error: ' + err));
+}
