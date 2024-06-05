@@ -3,22 +3,22 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 
 export const ForgotPassword = () => {
-    const [email, setEmail] = useState("");
-    const navigate = useNavigate();
-  
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      Axios.post('http://localhost:3000/auth/forgot-password'
-      , {email})
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    Axios.post('http://localhost:3000/auth/forgot-password'
+      , { email })
       .then(response => {
         if (response.status === 200) {
-            alert("reset link is send to your email check the mail");
-            console.log(response.data)
-            navigate('/login')
+          alert("reset link is send to your email check the mail");
+          console.log(response.data)
+          navigate('/login')
         }
       }).catch(err => console.log(err))
-    }
-  
+  }
+
   return (
     <div className="flex items-center justify-center h-screen bg-hero bg-cover">
       <form className="bg-transparent border-2 border-gray-400 p-6 rounded shadow-md w-80"

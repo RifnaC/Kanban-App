@@ -6,30 +6,30 @@ export const Reset = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState('')
     const navigate = useNavigate();
-    const {token} = useParams()
+    const { token } = useParams()
     const validateForm = () => {
         if (password.length < 6) {
-          setError('Password should be at least 6 characters long');
-          return false
+            setError('Password should be at least 6 characters long');
+            return false
         }
-    
+
         if (password !== confirmPassword) {
-          setError('Passwords do not match');
-          return false
+            setError('Passwords do not match');
+            return false
         }
         setError("")
         return true
-      };
+    };
     const handleSumbit = (e) => {
         e.preventDefault();
-        if(validateForm()){
-            Axios.post("http://localhost:3000/auth/reset-password/"+token, { password, confirmPassword })
-            .then((response) => {
-                if (response.status === 200) {
-                    navigate('/login')
-                }
-            })
-            .catch((err) => console.log(err))
+        if (validateForm()) {
+            Axios.post("http://localhost:3000/auth/reset-password/" + token, { password, confirmPassword })
+                .then((response) => {
+                    if (response.status === 200) {
+                        navigate('/login')
+                    }
+                })
+                .catch((err) => console.log(err))
         }
     }
     return (

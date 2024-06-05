@@ -16,13 +16,13 @@ const Column = ({ column, tasks, onTaskUpdated, onTaskDeleted }) => {
             className="flex flex-col space-y-2 p-2 pb-0"
           >
             {tasks.map((task, index) => (
-              <Task 
-              key={task.id} 
-              columnId={column.id}
-              task={task} 
-              index={index} 
-              onTaskUpdated={onTaskUpdated}
-              onTaskDeleted={onTaskDeleted}
+              <Task
+                key={task.id}
+                columnId={column.id}
+                task={task}
+                index={index}
+                onTaskUpdated={onTaskUpdated}
+                onTaskDeleted={onTaskDeleted}
               />
             ))}
             {provided.placeholder}
