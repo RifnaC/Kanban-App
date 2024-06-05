@@ -35,7 +35,6 @@ const Task = ({ task, columnId, index, onTaskUpdated, onTaskDeleted }) => {
   const handleDeleteClick = () => {
     axios.delete(`http://localhost:3000/api/task/${task.id}`)
       .then(() => {
-        console.log(task)
         onTaskDeleted(task.id);
       })
       .catch(error => {

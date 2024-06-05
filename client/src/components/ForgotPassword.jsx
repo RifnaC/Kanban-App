@@ -13,10 +13,9 @@ export const ForgotPassword = () => {
       .then(response => {
         if (response.status === 200) {
           alert("reset link is send to your email check the mail");
-          console.log(response.data)
           navigate('/login')
         }
-      }).catch(err => console.log(err))
+      }).catch(err => console.error(err))
   }
 
   return (

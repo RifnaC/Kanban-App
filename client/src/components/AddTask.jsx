@@ -6,9 +6,6 @@ const AddTask = ({ columnId, onTaskAdded }) => {
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
 
-  // const handleAddTaskClick = () => {
-  //   setIsFormVisible(true);
-  // }
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;

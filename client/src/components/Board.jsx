@@ -28,26 +28,25 @@ const Board = () => {
 
   useEffect(() => {
     axios.get('http://localhost:3000/api/tasks/')
-    .then(response => {
-      const tasks = {};
-      const columns = {
-        'column-1': { id: 'column-1', title: 'To Do', taskIds: [] },
-        'column-2': { id: 'column-2', title: 'In Progress', taskIds: [] },
-        'column-3': { id: 'column-3', title: 'Done', taskIds: [] },
-      };
-      const columnOrder = ['column-1', 'column-2', 'column-3'];
-      response.data.tasks.map(task => {
-        tasks[task._id] = { id: task._id, title: task.title, description: task.description, dueDate: task.dueDate };
-        console.log(columns[task.columnId])
-        columns[task.columnId].taskIds.push(task._id);
-      });
+      .then(response => {
+        const tasks = {};
+        const columns = {
+          'column-1': { id: 'column-1', title: 'To Do', taskIds: [] },
+          'column-2': { id: 'column-2', title: 'In Progress', taskIds: [] },
+          'column-3': { id: 'column-3', title: 'Done', taskIds: [] },
+        };
+        const columnOrder = ['column-1', 'column-2', 'column-3'];
+        response.data.tasks.map(task => {
+          tasks[task._id] = { id: task._id, title: task.title, description: task.description, dueDate: task.dueDate };
+          columns[task.columnId].taskIds.push(task._id);
+        });
 
-      setData({ tasks, columns, columnOrder });
-    })
-    .catch(error => {
-      console.error('Error fetching tasks:', error);
-    });
-}, []);
+        setData({ tasks, columns, columnOrder });
+      })
+      .catch(error => {
+        console.error('Error fetching tasks:', error);
+      });
+  }, []);
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -117,7 +116,6 @@ const Board = () => {
     // Update the task's columnId in the backend
     const movedTask = data.tasks[draggableId];
     movedTask.columnId = destination.droppableId;
-    console.log(movedTask)
     axios.post(`http://localhost:3000/api/task/${draggableId}`, movedTask)
       .catch(error => {
         console.error('Error updating task:', error);
@@ -152,7 +150,7 @@ const Board = () => {
         }
       })
       .catch(err => {
-        console.log(err)
+        console.error(err)
       })
   }
   const handleTaskUpdated = (updatedTask) => {
@@ -160,7 +158,7 @@ const Board = () => {
     setData(prevState => ({ ...prevState, tasks: newTasks }));
   };
   const handleTaskDeleted = (taskId) => {
-    const { [taskId]: deletedTask,...newTasks } = data.tasks;
+    const { [taskId]: deletedTask, ...newTasks } = data.tasks;
     const newColumns = { ...data.columns };
     Object.keys(newColumns).map(columnId => {
       newColumns[columnId].taskIds = newColumns[columnId].taskIds.filter(id => id !== taskId);
@@ -189,21 +187,21 @@ const Board = () => {
           columnId="column-1"
           onTaskAdded={handleTaskAdded}
           addTask={handleFormSubmit}
-          FormVisible={()=> setIsFormVisible(isFormVisible)}
+          FormVisible={() => setIsFormVisible(isFormVisible)}
         />
       )}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex space-x-4 p-4 mx-5">
           {data.columnOrder.map((columnId) => {
-            const column = data.columns[columnId];            
+            const column = data.columns[columnId];
             const tasks = column.taskIds.map((taskId) => data.tasks[taskId]);
-            
-            return <Column 
-            key={column.id} 
-            column={column} 
-            tasks={tasks} 
-            onTaskUpdated={handleTaskUpdated} 
-            onTaskDeleted={handleTaskDeleted}/>;
+
+            return <Column
+              key={column.id}
+              column={column}
+              tasks={tasks}
+              onTaskUpdated={handleTaskUpdated}
+              onTaskDeleted={handleTaskDeleted} />;
           })}
         </div>
       </DragDropContext>

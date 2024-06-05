@@ -17,7 +17,7 @@ export const Login = () => {
       if (response.status === 200) {
         navigate("/")
       }
-    }).catch(err => console.log(err))
+    }).catch(err => console.error(err))
   }
 
   return (
