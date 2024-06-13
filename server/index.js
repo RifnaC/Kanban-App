@@ -9,12 +9,12 @@ import { taskRouter } from "./routes/task.js";
 
 const app = express();
 
-app.use(cors(
-    {
-        origin: ["http://localhost:5173/"],
-        credentials: true,
-    }
-))
+const corsOption  ={
+    origin: ["http://localhost:5173", "http://localhost:3000"],
+    credentials: true
+}
+app.use(cors(corsOption));
+app.options('*', cors(corsOption));
 
 app.use(express.json())
 app.use("/auth", userRouter);

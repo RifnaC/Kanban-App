@@ -5,7 +5,6 @@ import { DragDropContext } from 'react-beautiful-dnd';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AddTask from './AddTask';
-// import socketIO  from "socket.io-client"
 
 // const socket = socketIO.connect("http://localhost:3000")
 const Board = () => {
@@ -113,7 +112,6 @@ const Board = () => {
 
     setData(newState);
 
-    // Update the task's columnId in the backend
     const movedTask = data.tasks[draggableId];
     movedTask.columnId = destination.droppableId;
     axios.post(`http://localhost:3000/api/task/${draggableId}`, movedTask)
