@@ -7,20 +7,24 @@ dotenv.config();
 
 // Sign Up
 export const signUp = async (req, res) => {
-    const { name, email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (user) {
-        return res.status(400).json({ message: "User already exists" });
-    }
+    try {
+        const { name, email, password } = req.body;
+        const user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ message: "User already exists" });
+        }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({
-        name,
-        email,
-        password: hashedPassword
-    });
-    await newUser.save();
-    return res.status(200).json({ message: "Registered successfully" });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({
+            name,
+            email,
+            password: hashedPassword
+        });
+        await newUser.save();
+        return res.status(200).json({ message: "Registered successfully" });
+    } catch (error) {
+        return res.status(500).json({message: `error: ${error}`})
+    }
 }
 
 // Login
@@ -44,12 +48,12 @@ export const login = async (req, res) => {
 export const verifyToken = async (req, res, next) => {
     try {
         const token = req.cookies.token;
-    if (!token) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id);
-    next();
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = await User.findById(decoded.id);
+        next();
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -58,8 +62,8 @@ export const verifyToken = async (req, res, next) => {
 // forgot password
 export const forgotPassword = async (req, res) => {
     try {
-        const email  = req.body.email;
-        const user = await User.findOne({email});
+        const email = req.body.email;
+        const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: "User does not exist" });
         }
@@ -79,49 +83,49 @@ export const forgotPassword = async (req, res) => {
             text: `Please click on the link below to reset your password.\n http://localhost:5173/reset-password/${token}`,
         };
         transporter.sendMail(mailOptions, (error, info) => {
-            if(error) {
+            if (error) {
                 return res.status(500).json({ message: "Something went wrong while sending email" });
             } else {
                 return res.status(200).json({ message: "Email has been sent" + info.response });
             }
         });
     } catch (error) {
-        return res.status(500).json({ message: "Something went wrong"});
+        return res.status(500).json({ message: "Something went wrong" });
     }
 }
 
 // reset password
-export const resetPassword = async(req, res) => {
+export const resetPassword = async (req, res) => {
     const token = req.params.token;
     const password = req.body.password;
     const confirmPassword = req.body.confirmPassword;
-        try {
-            if (password !== confirmPassword) {
-                return res.status(400).json({ message: "Passwords do not match" });
-            }
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const id = decoded.id;
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const user = await User.findByIdAndUpdate({ _id: id }, { password: hashedPassword });
-            return res.status(200).json({ message: "Password reset successfully" });
-        } catch (error) {
-            res.status(400).json({ message: "Invalid or expired token" });
+    try {
+        if (password !== confirmPassword) {
+            return res.status(400).json({ message: "Passwords do not match" });
         }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const id = decoded.id;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.findByIdAndUpdate({ _id: id }, { password: hashedPassword });
+        return res.status(200).json({ message: "Password reset successfully" });
+    } catch (error) {
+        res.status(400).json({ message: "Invalid or expired token" });
+    }
 
 }
 
 // Authorized
-export const authorized = async(req, res) => {
-    if(req.user){
+export const authorized = async (req, res) => {
+    if (req.user) {
         res.status(200).json({ message: "Authorized" });
     } else {
         res.status(401).json({ message: "Unauthorized" });
     }
-    
+
 }
 
 // Logout
-export const logout = async(req, res) => {
+export const logout = async (req, res) => {
     res.clearCookie("token");
     res.status(200).json({ message: "Logged out successfully" });
 }
