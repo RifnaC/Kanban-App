@@ -22,7 +22,7 @@ const Task = ({ task, columnId, index, onTaskUpdated, onTaskDeleted }) => {
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const taskWithColumn = { ...updatedTask, columnId: columnId };
-    axios.post(`http://localhost:3000/api/task/${task.id}`, taskWithColumn)
+    axios.post(`https://kanban-app-beryl.vercel.app/api/task/${task.id}`, taskWithColumn)
       .then(() => {
         onTaskUpdated(taskWithColumn);
         setIsEditing(false);
@@ -33,7 +33,7 @@ const Task = ({ task, columnId, index, onTaskUpdated, onTaskDeleted }) => {
   };
 
   const handleDeleteClick = () => {
-    axios.delete(`http://localhost:3000/api/task/${task.id}`)
+    axios.delete(`https://kanban-app-beryl.vercel.app/api/task/${task.id}`)
       .then(() => {
         onTaskDeleted(task.id);
       })

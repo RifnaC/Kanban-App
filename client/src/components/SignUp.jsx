@@ -46,7 +46,7 @@ export const SignUp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
-      Axios.post("http://localhost:3000/auth/signup", { name, email, password })
+      Axios.post("https://kanban-app-beryl.vercel.app/auth/signup", { name, email, password })
         .then((response) => {
           if (response.status === 200) {
             navigate('/login');

@@ -10,18 +10,19 @@ import { taskRouter } from "./routes/task.js";
 const app = express();
 
 const corsOption  ={
-    origin: ["http://localhost:5173", "http://localhost:3000"],
+    origin: ["https://kanban-app-yoya.vercel.app/"],
     credentials: true
 }
 app.use(cors(corsOption));
 app.options('*', cors(corsOption));
+mongoose.connect(process.env.MONGO_URI)
 
 app.use(express.json())
 app.use("/auth", userRouter);
 app.use("/api", taskRouter);
 
 
-mongoose.connect(process.env.MONGO_URI)
+
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);

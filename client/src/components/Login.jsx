@@ -10,7 +10,7 @@ export const Login = () => {
   Axios.defaults.withCredentials = true;
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post('http://localhost:3000/auth/login', {
+    Axios.post('https://kanban-app-beryl.vercel.app/auth/login', {
       email,
       password
     }).then(response => {

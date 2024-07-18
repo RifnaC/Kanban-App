@@ -23,7 +23,7 @@ const AddTask = ({ columnId, onTaskAdded }) => {
     };
 
     try {
-      const response = await Axios.post("http://localhost:3000/api/task", task)
+      const response = await Axios.post("https://kanban-app-beryl.vercel.app/api/task", task)
       const newTaskId = response.data._id;
       const newTaskWithId = { id: newTaskId, ...task };
       onTaskAdded(newTaskWithId);

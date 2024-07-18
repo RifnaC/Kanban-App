@@ -23,7 +23,7 @@ export const Reset = () => {
     const handleSumbit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            Axios.post("http://localhost:3000/auth/reset-password/" + token, { password, confirmPassword })
+            Axios.post("https://kanban-app-beryl.vercel.app/auth/reset-password/" + token, { password, confirmPassword })
                 .then((response) => {
                     if (response.status === 200) {
                         navigate('/login')

@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/auth/verify')
+    axios.get('https://kanban-app-beryl.vercel.app/auth/verify')
       .then(response => {
         if (response.status === 200) {
           setIsAuthenticated(true);

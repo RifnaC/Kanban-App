@@ -26,7 +26,7 @@ const Board = () => {
   };
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/tasks/')
+    axios.get('https://kanban-app-beryl.vercel.app/api/tasks/')
       .then(response => {
         const tasks = {};
         const columns = {
@@ -114,7 +114,7 @@ const Board = () => {
 
     const movedTask = data.tasks[draggableId];
     movedTask.columnId = destination.droppableId;
-    axios.post(`http://localhost:3000/api/task/${draggableId}`, movedTask)
+    axios.post(`https://kanban-app-beryl.vercel.app/api/task/${draggableId}`, movedTask)
       .catch(error => {
         console.error('Error updating task:', error);
       });
@@ -141,7 +141,7 @@ const Board = () => {
     setData(newState);
   };
   const handleLogout = () => {
-    axios.get('http://localhost:3000/auth/logout')
+    axios.get('https://kanban-app-beryl.vercel.app/auth/logout')
       .then(response => {
         if (response.status === 200) {
           navigate('/login')
