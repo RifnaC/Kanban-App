@@ -7,6 +7,7 @@ import cors from "cors";
 import { taskRouter } from "./routes/task.js";
 
 const app = express();
+mongoose.connect(process.env.MONGO_URI);
 
 const corsOption  ={
     origin: ["https://kanban-app-yoya-fyenvffxd-rifnacs-projects.vercel.app"],
@@ -14,7 +15,7 @@ const corsOption  ={
 }
 app.use(cors(corsOption));
 app.options('*', cors(corsOption));
-mongoose.connect(process.env.MONGO_URI)
+
 
 app.use(express.json())
 app.use("/auth", userRouter);
