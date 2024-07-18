@@ -10,7 +10,7 @@ import { taskRouter } from "./routes/task.js";
 const app = express();
 
 const corsOption  ={
-    origin: ["https://kanban-app-yoya.vercel.app/"],
+    origin: ["https://kanban-app-beryl.vercel.app/"],
     credentials: true
 }
 app.use(cors(corsOption));
