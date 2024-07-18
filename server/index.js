@@ -4,7 +4,6 @@ dotenv.config();
 import mongoose from "mongoose";
 import { userRouter } from "./routes/user.js";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import { taskRouter } from "./routes/task.js";
 
 const app = express();
